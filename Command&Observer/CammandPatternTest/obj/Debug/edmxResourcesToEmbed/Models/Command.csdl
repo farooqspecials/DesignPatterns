@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="CommandDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Login_table">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EmailAddress" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="tbl_Contact" Relationship="CommandDatabaseModel.FK_tbl_Contact_Login_table" FromRole="Login_table" ToRole="tbl_Contact" />
+  </EntityType>
+  <EntityContainer Name="CommandDatabaseEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Login_table" EntityType="Self.Login_table" />
+    <EntitySet Name="LoginLogs" EntityType="CommandDatabaseModel.LoginLog" />
+    <EntitySet Name="tbl_Activity" EntityType="CommandDatabaseModel.tbl_Activity" />
+    <EntitySet Name="tbl_Contact" EntityType="CommandDatabaseModel.tbl_Contact" />
+    <AssociationSet Name="FK_tbl_Contact_Login_table" Association="CommandDatabaseModel.FK_tbl_Contact_Login_table">
+      <End Role="Login_table" EntitySet="Login_table" />
+      <End Role="tbl_Contact" EntitySet="tbl_Contact" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="LoginLog">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LoginTime" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="tbl_Activity">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Time" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="tbl_Contact">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Subject" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Details" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="date" Type="DateTime" Precision="3" />
+    <Property Name="UserId" Type="Int32" />
+    <NavigationProperty Name="Login_table" Relationship="CommandDatabaseModel.FK_tbl_Contact_Login_table" FromRole="tbl_Contact" ToRole="Login_table" />
+  </EntityType>
+  <Association Name="FK_tbl_Contact_Login_table">
+    <End Type="CommandDatabaseModel.Login_table" Role="Login_table" Multiplicity="0..1" />
+    <End Type="CommandDatabaseModel.tbl_Contact" Role="tbl_Contact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Login_table">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="tbl_Contact">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

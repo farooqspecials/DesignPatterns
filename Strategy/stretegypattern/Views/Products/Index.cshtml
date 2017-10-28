@@ -1,0 +1,122 @@
+﻿@model IEnumerable<stretegypattern.Models.Products>
+
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@ViewBag.ExecutionTime
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductPrice )
+            
+        </th>
+        <th></th>
+    </tr>
+   
+
+@foreach (var item in Model) {
+    <tr data-productid="@item.Id">
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductPrice, new { @id = "check" })
+        </td>
+       
+            <td>
+
+               @Html.DropDownList("Status", new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="Student Discount", Value = "1" },
+                    new SelectListItem{ Text="Loyalty Discount", Value = "0" }
+                 }, "Please select discount", new { @class="ddlStatus" })
+                
+            </td>
+       
+
+        <td>
+            @*@Html.ActionLink("HelloPrice", "",null , new {@id="getPrice"}) |*@
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            <button id="getPrice" data-id="" class="btn btn-danger get-price" data-dismiss="modal">GetPrice</button>
+        </td>
+    </tr>
+}
+
+</table>
+<div class="clearfix">
+    <div class="pull-right">
+        <label>Discount: <span id="lblDiscountAmount"></span></label>
+       
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            console.log("ready!");
+            $('.ddlStatus').change(function () {
+                var val = $(this).val();
+                var productId = $(this).parent('td').parent('tr').attr('data-productid')
+                ChangeDis(val, productId);
+            });
+            function ChangeDis(val, productId) {
+
+                $.ajax({
+                    url: '/Products/GetDis',
+                    data: {
+                        discount: val,
+                        productId: productId
+                    },
+                    success: function (data) {
+                        $('#lblDiscountAmount').text(data);
+
+                    }
+                });
+            }
+          
+            $('.get-price').click(function () {
+                var discountAmount = $('#lblDiscountAmount').text();
+                var productId = $(this).parent('td').parent('tr').attr('data-productid')
+                alert(productId);
+                alert(discountAmount);
+                debugger;
+               
+                var url = "/Products/helloPrice?productid=" + productId + "&ProductPrice=" + discountAmount;
+                window.location.href = url;
+                //$.ajax({
+                //    url: '/Products/helloPrice',
+                    
+                //    data: {
+                //        //These two keys should keep consistent with the parameters ( int? ProductId , int? ProductPrice ) in action, including uppercase and lowercase.
+                //        productid: productId,
+                //        Productprice: discountAmount
+                //    },
+                //    success: function (data) {
+                //        //$('body').empty();
+                //        //$('body').append(data);
+                       
+                //    }
+                //});
+
+
+              
+            });
+
+        });
+
+    </script>
+    
+}
